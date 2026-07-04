@@ -22,6 +22,7 @@ const peers = new Map(); // socketId -> { pc, name, tile }
 let micOn = true;
 let camOn = true;
 let chatVisible = true;
+const pendingNames = new Map(); // socketId -> name, for peers announced before their offer arrives
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -218,10 +219,12 @@ socket.on('room-joined', ({ selfId: id, members }) => {
 });
 
 socket.on('peer-joined', ({ id, name }) => {
+  pendingNames.set(id, name);
   addSystemMessage(`${name} joined the call.`);
   // The existing peer waits for the newcomer's offer (newcomer calls everyone
-  // already present, per room-joined handler above), so nothing to do here
-  // except be ready to answer, which the 'signal' handler covers.
+  // already present, per room-joined handler above). We stash the name here
+  // so that when the offer arrives (handled in 'signal' below), the tile is
+  // created with the real name instead of a generic placeholder.
 });
 
 socket.on('signal', async ({ from, data }) => {
@@ -229,7 +232,9 @@ socket.on('signal', async ({ from, data }) => {
 
   if (data.type === 'offer') {
     if (!peer) {
-      const pc = createPeerConnection(from, 'Guest');
+      const name = pendingNames.get(from) || 'Guest';
+      createPeerConnection(from, name);
+      pendingNames.delete(from);
       peer = peers.get(from);
     }
     await peer.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
