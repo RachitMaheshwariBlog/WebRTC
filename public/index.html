@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Huddle — free video rooms</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOBBY SCREEN -->
+  <section id="lobby" class="screen">
+    <div class="lobby-card">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <h1>Huddle</h1>
+      </div>
+      <p class="tagline">Peer-to-peer video calls. No signups, no servers to pay for, no limits.</p>
+
+      <label class="field">
+        <span>Your name</span>
+        <input id="nameInput" type="text" placeholder="e.g. Priya" maxlength="30" autocomplete="off" />
+      </label>
+
+      <label class="field">
+        <span>Room code</span>
+        <div class="room-row">
+          <input id="roomInput" type="text" placeholder="e.g. tuesday-standup" maxlength="40" autocomplete="off" />
+          <button id="generateRoomBtn" type="button" title="Generate a random room code">🎲</button>
+        </div>
+      </label>
+
+      <div class="preview-wrap">
+        <video id="previewVideo" autoplay playsinline muted></video>
+        <div id="previewPlaceholder" class="preview-placeholder">Camera preview</div>
+      </div>
+
+      <div class="lobby-toggles">
+        <button id="toggleMicLobby" class="pill active" type="button">🎤 Mic on</button>
+        <button id="toggleCamLobby" class="pill active" type="button">📷 Cam on</button>
+      </div>
+
+      <button id="joinBtn" class="primary-btn" type="button">Join room</button>
+      <p id="lobbyError" class="error-text"></p>
+    </div>
+  </section>
+
+  <!-- CALL SCREEN -->
+  <section id="callScreen" class="screen hidden">
+    <header class="call-header">
+      <div class="room-info">
+        <strong id="roomLabel"></strong>
+        <button id="copyLinkBtn" class="link-btn" type="button">Copy invite link</button>
+      </div>
+      <div class="participant-count">
+        <span id="participantCount">1</span> in room
+      </div>
+    </header>
+
+    <main class="call-body">
+      <div id="videoGrid" class="video-grid"></div>
+
+      <aside id="chatPanel" class="chat-panel">
+        <div class="chat-header">
+          <span>In-room chat</span>
+          <button id="closeChatBtn" class="icon-btn" type="button">✕</button>
+        </div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <form id="chatForm" class="chat-form">
+          <input id="chatInput" type="text" placeholder="Message everyone…" autocomplete="off" maxlength="2000" />
+          <button type="submit">Send</button>
+        </form>
+      </aside>
+    </main>
+
+    <footer class="controls">
+      <button id="toggleMicBtn" class="control-btn active" title="Mute / unmute">
+        <span class="icon">🎤</span>
+      </button>
+      <button id="toggleCamBtn" class="control-btn active" title="Camera on / off">
+        <span class="icon">📷</span>
+      </button>
+      <button id="shareScreenBtn" class="control-btn" title="Share screen">
+        <span class="icon">🖥️</span>
+      </button>
+      <button id="toggleChatBtn" class="control-btn" title="Toggle chat">
+        <span class="icon">💬</span>
+      </button>
+      <button id="leaveBtn" class="control-btn danger" title="Leave call">
+        <span class="icon">📞</span>
+      </button>
+    </footer>
+  </section>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
